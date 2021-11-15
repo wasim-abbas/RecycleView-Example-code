@@ -1,17 +1,25 @@
 package com.example.recyclviewexample
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
 import android.content.Intent
+import android.preference.PreferenceManager
+import android.text.Editable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
+import kotlinx.android.synthetic.main.custom_diloge_box.*
+import kotlinx.android.synthetic.main.custom_diloge_box.view.*
+import kotlinx.android.synthetic.main.layout_recycle_view.*
 import kotlinx.android.synthetic.main.layout_recycle_view.view.*
 
-class ShoesListAdapter(private val dataList: List<Shoes>, private val context: Context) :
+
+class ShoesListAdapter(private val dataList: ArrayList<Shoes>, private val context: Context) :
     RecyclerView.Adapter<ShoesListAdapter.ShoesViewHolder>(), Filterable {
 
     var shoesFilterList = listOf<Shoes>()
@@ -19,7 +27,6 @@ class ShoesListAdapter(private val dataList: List<Shoes>, private val context: C
     init {
         shoesFilterList = dataList
     }
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShoesViewHolder {
         val view =
@@ -37,8 +44,6 @@ class ShoesListAdapter(private val dataList: List<Shoes>, private val context: C
         holder.textPosition.text = holder.absoluteAdapterPosition.toString()
         holder.bind(shoesFilterList.get(position))
 
-
-
         holder.layout.setOnClickListener {
             val intent = Intent(context, DetailViewActivity::class.java)
             intent.putExtra("imgId", dataList[position].img)
@@ -46,10 +51,47 @@ class ShoesListAdapter(private val dataList: List<Shoes>, private val context: C
             intent.putExtra("itemDes", dataList[position].itemDes)
             context.startActivity(intent)
         }
-   }
+
+        holder.layout.setOnLongClickListener {
+            Toast.makeText(context, "on long press clicked", Toast.LENGTH_SHORT).show()
+
+            val myDialogView =
+                View.inflate(context, R.layout.custom_diloge_box, null) //infalte the layout
+            val myAlert = AlertDialog.Builder(context).setView(myDialogView).show()
+
+            fun String.toEditable(): Editable = Editable.Factory.getInstance().newEditable(this)
+
+            myDialogView.myitemName.text = dataList[position].itemName.toEditable()
+            myDialogView.myitemD.text = dataList[position].itemDes.toEditable()
+
+            myDialogView.btnedit.setOnClickListener {
+                ///code her for edit button
+                fun String.toEditable(): Editable = Editable.Factory.getInstance().newEditable(this)
+
+                var itemN = myDialogView.myitemName.text.toString()
+                var descrpItem = myDialogView.myitemD.getText().toString()
+
+                dataList.set(position,Shoes(R.drawable.ic_launcher10,itemN,descrpItem))
+                notifyItemChanged(position)
+                
+
+                Toast.makeText(context, "data inserted", Toast.LENGTH_SHORT).show()
+                Log.e("hello", dataList.toString())
+                myAlert.dismiss()
+            }
+            myAlert.btnDelete.setOnClickListener {
+                dataList.removeAt(position)
+                notifyItemChanged(position)
+                myAlert.dismiss()
+            }
+
+            myAlert.show()
+            return@setOnLongClickListener true
+        }
+    }
+
 
     override fun getItemCount() = shoesFilterList.size
-
 
     override fun getFilter(): Filter {
         return object : Filter() {
@@ -61,7 +103,8 @@ class ShoesListAdapter(private val dataList: List<Shoes>, private val context: C
                     val resultList = ArrayList<Shoes>()
                     for (row in dataList) {
                         if (row.itemName.toLowerCase()
-                                .contains(constraint.toString().toLowerCase())) {
+                                .contains(constraint.toString().toLowerCase())
+                        ) {
                             resultList.add(row)
                         }
                     }
@@ -88,15 +131,15 @@ class ShoesListAdapter(private val dataList: List<Shoes>, private val context: C
     inner class ShoesViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val image: ImageView = itemView.findViewById(R.id.image)
         val textName: TextView = itemView.findViewById(R.id.itemNAme)
-        val textDes: TextView = itemView.findViewById(R.id.itemDescription)
+        val textDes: TextView = itemView.findViewById(R.id.myitemDescription)
         val textPosition: TextView = itemView.findViewById(R.id.position)
         val layout: RelativeLayout = itemView.findViewById(R.id.mylinearlayout)
 
 
         fun bind(model: Shoes): Unit {
-           itemView.image.setImageResource(model.img)
+            itemView.image.setImageResource(model.img)
             itemView.itemNAme.text = model.itemName
-            itemView.itemDescription.text = model.itemDes
+            itemView.myitemDescription.text = model.itemDes
 
         }
     }
