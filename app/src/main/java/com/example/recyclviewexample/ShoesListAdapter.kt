@@ -2,22 +2,22 @@ package com.example.recyclviewexample
 
 import android.app.AlertDialog
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import android.content.Intent
-import android.preference.PreferenceManager
+import android.provider.MediaStore
 import android.text.Editable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.custom_diloge_box.*
 import kotlinx.android.synthetic.main.custom_diloge_box.view.*
 import kotlinx.android.synthetic.main.layout_recycle_view.*
 import kotlinx.android.synthetic.main.layout_recycle_view.view.*
 
+//val REQUEST_CODE = 42
 
 class ShoesListAdapter(private val dataList: ArrayList<Shoes>, private val context: Context) :
     RecyclerView.Adapter<ShoesListAdapter.ShoesViewHolder>(), Filterable {
@@ -55,8 +55,7 @@ class ShoesListAdapter(private val dataList: ArrayList<Shoes>, private val conte
         holder.layout.setOnLongClickListener {
             Toast.makeText(context, "on long press clicked", Toast.LENGTH_SHORT).show()
 
-            val myDialogView =
-                View.inflate(context, R.layout.custom_diloge_box, null) //infalte the layout
+            val myDialogView=View.inflate(context, R.layout.custom_diloge_box, null)
             val myAlert = AlertDialog.Builder(context).setView(myDialogView).show()
 
             fun String.toEditable(): Editable = Editable.Factory.getInstance().newEditable(this)
@@ -65,16 +64,14 @@ class ShoesListAdapter(private val dataList: ArrayList<Shoes>, private val conte
             myDialogView.myitemD.text = dataList[position].itemDes.toEditable()
 
             myDialogView.btnedit.setOnClickListener {
-                ///code her for edit button
-                fun String.toEditable(): Editable = Editable.Factory.getInstance().newEditable(this)
+                ///code for image upload
 
+                ///code her for edit button
                 var itemN = myDialogView.myitemName.text.toString()
                 var descrpItem = myDialogView.myitemD.getText().toString()
 
-                dataList.set(position,Shoes(R.drawable.ic_launcher10,itemN,descrpItem))
+                dataList.set(position, Shoes(R.drawable.ic_launcher10, itemN, descrpItem))
                 notifyItemChanged(position)
-                
-
                 Toast.makeText(context, "data inserted", Toast.LENGTH_SHORT).show()
                 Log.e("hello", dataList.toString())
                 myAlert.dismiss()
@@ -98,7 +95,7 @@ class ShoesListAdapter(private val dataList: ArrayList<Shoes>, private val conte
             override fun performFiltering(constraint: CharSequence?): FilterResults {
                 val charSearch = constraint.toString()
                 if (charSearch.isEmpty()) {
-                    shoesFilterList = dataList as ArrayList<Shoes>
+                    shoesFilterList = dataList
                 } else {
                     val resultList = ArrayList<Shoes>()
                     for (row in dataList) {

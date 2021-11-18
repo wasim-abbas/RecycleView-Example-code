@@ -6,20 +6,45 @@
     android:layout_height="match_parent"
     tools:context=".DetailViewActivity">
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="12dp"
+        android:max="100" />
+
     <ImageView
         android:id="@+id/img"
+        android:layout_width="200dp"
+        android:layout_height="180dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:src="@drawable/ic_launcher1"
+
+        />
+
+    <TextView
+        android:id="@+id/tvBroadCast"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:src="@drawable/ic_launcher1"
-        />
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:text="@string/battery_level"
+        android:textAlignment="center"
+        android:textColor="@color/floatColor"
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/tvNAme"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/img"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="15dp"
         android:text="hello World"
         android:textAlignment="center"
         android:textColor="@color/black"
@@ -30,12 +55,84 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tvNAme"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="15dp"
+        android:maxLines="2"
         android:text="Programmer Force"
         android:textAlignment="center"
-        android:maxLines="2"
         android:textColor="@color/black"
         android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/tvBitmap"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/sound_recorder_heading"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="92dp"
+        android:text="Sound Recorder"
+        android:textColor="#000"
+        android:textSize="32dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/sound_recorder_heading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvDes"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:text="Sound Recorder"
+        android:textColor="#000"
+        android:textSize="7sp" />
+
+    <Button
+        android:id="@+id/btnstart_recording"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="32dp"
+        android:layout_marginBottom="32dp"
+        android:text="Start" />
+
+    <!--    <Button-->
+    <!--        android:id="@+id/btnpause_recording"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_alignParentBottom="true"-->
+    <!--        android:layout_marginStart="10dp"-->
+    <!--        android:layout_marginBottom="32dp"-->
+    <!--        android:layout_toRightOf="@id/btnstart_recording"-->
+    <!--        android:text="Pause" />-->
+
+    <Button
+        android:id="@+id/btnPlay_recording"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="25dp"
+        android:layout_marginBottom="32dp"
+        android:layout_toRightOf="@id/btnstart_recording"
+        android:text="Play" />
+
+    <Button
+        android:id="@+id/btnstop_recording"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="32dp"
+        android:layout_marginBottom="32dp"
+        android:text="Stop" />
+
+    <Button
+        android:id="@+id/btnCamera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="180dp"
+        android:layout_marginTop="150dp"
+        android:background="@drawable/ic_photo_camera" />
 
 
 </RelativeLayout>

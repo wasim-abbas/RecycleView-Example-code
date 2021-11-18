@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.SearchView
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
 import com.google.gson.Gson
@@ -11,15 +12,13 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.custom_diloge_box.view.*
 import kotlinx.android.synthetic.main.custom_diloge_box.view.myitemD
 import kotlinx.android.synthetic.main.custom_diloge_box.view.myitemName
-import java.lang.reflect.Type
 import java.util.ArrayList
 
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     var adapter: ShoesListAdapter? = null
-
-    val data = arrayListOf(
+    var dataList = arrayListOf(
         Shoes(R.drawable.ic_launcher1, "white shoes", "this shoes is bought by wasim"),
         Shoes(R.drawable.ic_launcher2, "Balck shoes", "This document has been pr"),
         Shoes(R.drawable.ic_launcher3, "brown shoes", "This is Brown shoes"),
@@ -41,27 +40,58 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         )
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-
         init()
         btnfloatAdd.setOnClickListener(this)
 
-        val mySP = getSharedPreferences("File", MODE_PRIVATE)
-        val jsonString = mySP.getString("key", "")
-        //val type : Type = object : TypeToken<ArrayList<Shoes>?>() {}.type
-        val gson : Gson = Gson()
-        val myshoesObj : Shoes = gson.fromJson(jsonString, Shoes::class.java)
-        data.addAll(listOf(myshoesObj))
     }
 
 
     fun init() {
-        adapter = ShoesListAdapter(data, this)
+
+        //dataLoadFRomSharedPRefrence()
+        singletonMEthod()
+    }
+
+    fun singletonMEthod() {
+
+        var mySingleTonList = arrayListOf<Shoes>()
+
+        mySingleTonList = MySingleton.myDataList      // 1st method of accessing singlton class
+       // mySingleTonList = MSingleton.myDataList    //2nd method of accessing singlton class
+
+        mySingleTonList.removeAt(0)/// removing value from SingleTonList
+        mySingleTonList.addAll(listOf(Shoes(R.drawable.ic_launcher12,"Kotlin","Hello Kotlin"))) //Adding value fromList
+
+        adapter = ShoesListAdapter(mySingleTonList, this)
         myRecycleView.layoutManager = LinearLayoutManager(this)
         myRecycleView.adapter = adapter
+    }
+
+    ///Load data from shsred PRefrences and save list to shared preprences
+    fun dataLoadFRomSharedPRefrence() {
+        val mySP = getSharedPreferences("File", MODE_PRIVATE)
+        val jsonString = mySP.getString("key", "")
+        val type = object : TypeToken<ArrayList<Shoes>?>() {}.type
+        val gson = Gson()
+
+        if (jsonString == "") {
+            Toast.makeText(applicationContext, "datalist ", Toast.LENGTH_SHORT).show()
+            adapter = ShoesListAdapter(dataList, this)
+        } else {
+            val myshoesObj: ArrayList<Shoes> = gson.fromJson(jsonString, type)
+            Toast.makeText(applicationContext, "myobjString ", Toast.LENGTH_SHORT).show()
+
+            //        data.addAll(listOf(myshoesObj))
+            adapter = ShoesListAdapter(myshoesObj, this)
+        }
+
+        myRecycleView.layoutManager = LinearLayoutManager(this)
+        myRecycleView.adapter = adapter
+
         searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(p0: String?): Boolean {
                 return true
@@ -77,35 +107,35 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View?) {
         val myDialogView = View.inflate(this, R.layout.custom_diloge_box, null) //infalte the layout
         val myAlert = android.app.AlertDialog.Builder(this).setView(myDialogView).show()
-
         myDialogView.btnDelete.setText("calcel")
         myDialogView.btnedit.setText("Add")
 
         myDialogView.btnedit.setOnClickListener {
-            var edname = myDialogView.myitemName.text.toString()
-            var edDes = myDialogView.myitemD.text.toString()
 
-            val sharedPreferences = getSharedPreferences("File", MODE_PRIVATE)
-            val editor = sharedPreferences.edit()
-            val gson = Gson()
-            val myjson = gson.toJson(Shoes(R.drawable.ic_launcher1, edname, edDes))
-            editor.putString("key", myjson)
-            editor.apply()
-            editor.commit()
+            try {
+                var edname = myDialogView.myitemName.text.toString()
+                var edDes = myDialogView.myitemD.text.toString()
 
-//            val mySP = getSharedPreferences("File", MODE_PRIVATE)
-//            val myJsonString= mySP.getString("key",null)
-//            val model = gson.fromJson(myJsonString,Shoes.class)
+                dataList.addAll(listOf(Shoes(R.drawable.ic_launcher1, edname, edDes)))
 
-            val mySP = getSharedPreferences("File", MODE_PRIVATE)
-            val jsonString = mySP.getString("key", "")
-            //val type : Type = object : TypeToken<ArrayList<Shoes>?>() {}.type
+                val sharedPreferences = getSharedPreferences("File", MODE_PRIVATE)
+                val editor = sharedPreferences.edit()
 
-            val myshoesObj : Shoes = gson.fromJson(jsonString, Shoes::class.java)
+                val gson = Gson()
+                val myjson = gson.toJson(dataList)
+                editor.putString("key", myjson)
+                editor.apply()
+                editor.commit()
 
-            data.addAll(listOf(myshoesObj))
-            adapter?.notifyItemInserted(data.size - 1)
-            myRecycleView.smoothScrollToPosition(data.size - 1)
+                //dataList.addAll(listOf(Shoes(R.drawable.ic_launcher1, edname, edDes)))
+                adapter?.notifyItemInserted(dataList.size - 1)
+                adapter?.notifyDataSetChanged()
+                myRecycleView.smoothScrollToPosition(dataList.size - 1)
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
             myAlert.dismiss()
 
         }
@@ -113,15 +143,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             myAlert.dismiss()
         }
     }
+
+
 }
-//
-//val sp = getSharedPreferences("file", AppCompatActivity.MODE_PRIVATE)
-//val editor = sp.edit()
-//editor.putInt("img", R.drawable.ic_launcher10)
-//editor.putString("itemName", edname)
-//editor.putString("itemDes", edDes)
-//editor.commit()
-//editor.apply()
-//
-//data.addAll(listOf(Shoes(R.drawable.ic_launcher1,edname,edDes)))
-////    data.addAll(listOf(Shoes(img,itname.toString(),itemDe.toString())))
+
