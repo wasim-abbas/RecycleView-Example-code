@@ -49,7 +49,7 @@ class DetailViewActivity : AppCompatActivity(), View.OnClickListener {
         val intent = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
         registerReceiver(betteryBroadcast, intent)
 
-         //encdodeAudio()
+         encdodeAudio()
 
     }
 
@@ -140,12 +140,11 @@ class DetailViewActivity : AppCompatActivity(), View.OnClickListener {
     fun encdodeAudio() {
         //val file = File(Environment.getExternalStorageDirectory().absolutePath + "/recording.mp3")
         val path = System.getProperty("user.dir") + "\\src\\soundr.mp3"
-
-
         try {
             val encoded = Files.readAllBytes(Paths.get(path))
-            println("********* Your Audio File ************* ${Arrays.toString(encoded)}")
-            Log.e("hello"," ********** ${Arrays.toString(encoded)}")
+            val encodedBytes = Base64.getEncoder().encode(encoded)
+            println("********* Your Audio File ************* $encodedBytes")
+            Log.e("hello"," ********** $encodedBytes")
         } catch (e: IOException) {
 
         }
